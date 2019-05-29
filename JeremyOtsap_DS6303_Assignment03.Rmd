@@ -1,0 +1,233 @@
+---
+title: "Live Session 3"
+author: "Jeremy Otsap"
+date: "May 21, 2019"
+output: 
+  html_document:
+    keep_md: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 2
+
+A) Loading titanic.csv into data frame
+
+```{r, echo = T}
+read.csv("https://raw.githubusercontent.com/jotsap/DDS6306_Unit03/master/titanic/titanic.csv", sep = ",", header = T) -> titanic.df
+```
+
+B) Output the respective count of females and males aboard the Titanic
+
+```{r, echo = T}
+#all 'female' rows
+titanic.df[titanic.df$Sex == 'female',] -> titanic.female
+print("female passengers")
+nrow(titanic.female) 
+
+#all 'male' rows
+titanic.df[titanic.df$Sex == 'male',] -> titanic.male
+print("male passengers")
+nrow(titanic.male) 
+```
+
+
+### Pie Chart of Male vs Female
+```{r, echo = T}
+#Pie Chart male vs femaile
+titanic.table <- table(titanic.df$Sex)
+titanic.labels <- paste(names(titanic.table), "\n", titanic.table, sep="")
+pie(titanic.table, labels = titanic.labels, main = "Pie Chart of Gender") 
+
+
+
+```
+
+C) Means of Age, Fare, and Survival
+
+```{r, echo = T}
+# ignoring NA values
+sapply(titanic.df[,c(6,10,2)], mean, na.rm=T) -> titanic.mean
+titanic.mean
+```
+
+
+## Question 3
+
+A) Creating the Helper function
+```{r, echo = T}
+#loading sleep data set
+sleep.df <- read.csv("http://talklab.psy.gla.ac.uk/L1_labs/lab_1/homework/sleep_data_01.csv", sep = ",", header = T)
+
+#function for 
+#median of Age
+#range of Duration
+#mean of RSES
+#std dev of RSES
+
+sleephelp <- function(a,b,c,d) {
+  aa <- median(a, na.rm = T)
+  bb <- range(b, na.rm = T)
+  cc <- mean(c, na.rm = T)
+  dd <- sd(d, na.rm = T)
+  output <- c(
+    Age_Median = aa,
+    Duration_Range = bb,
+    RSES_Mean = cc,
+    RSES_StdDev = dd
+  )
+  return( output)
+}
+
+sleephelp(sleep.df$Age,sleep.df$Duration,sleep.df$RSES,sleep.df$RSES)
+
+
+```
+
+
+B, C, E) Report Output
+```{r, echo = T}
+
+#report function
+#median of age
+#RSES Mean / 5
+#RSES Std Dev / 5
+#Duration Max - Min
+
+sleepreport <- function(a,b,c) {
+  aa <- median(a, na.rm = T)
+  bb <- mean(b, na.rm = T) / 5
+  cc <- sd(b, na.rm = T) / 5
+  dd <- max(c, na.rm = T) - min(c, na.rm = T)
+  output <- c(
+    MedianAge = aa,
+    SelfEsteem = bb,
+    SE_SD = cc,
+    DurationRange = dd
+  )
+  outputframe <- data.frame(output)
+  return(outputframe)
+}
+sleepreport(sleep.df$Age,sleep.df$RSES,sleep.df$Duration)
+
+```
+
+
+
+
+## Question 4
+A) Loading fivethirtyeight package & listing all data sets within package
+```{r, echo = T}
+
+#install fivethirtyeight packages
+library(fivethirtyeight)
+
+# To see a list of all data sets:
+data(package = "fivethirtyeight")
+```
+
+B) Loading 22nd data set "college_recent_grads" into data frame
+
+```{r, echo = T}
+#loading 22nd data set "college_recent_grads" from fivethirtyeight package
+df <- college_recent_grads
+head(df)
+```
+
+C) Detailed view of data sets w/in fivethirtyeight package
+URL is http://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/
+```{r, echo = T}
+
+# To see a more detailed list of all data sets, see the package vignette:
+vignette("fivethirtyeight", package = "fivethirtyeight") 
+
+# URL is http://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/
+
+```
+
+D) Dimensions of dataframe
+
+```{r, echo = T}
+#dimensions of df
+dim(df)
+
+#column names of df
+colnames(df)
+
+#alternatively
+str(df)
+
+```
+
+
+
+## Question 5
+
+A) Column names and number of colums
+```{r, echo = T}
+# column names
+colnames(df)
+
+# number of columns
+length(colnames(df))
+
+```
+
+
+B) Unique factors for major_category column in df
+```{r, echo = T}
+
+#much simpler to use count() from dplyr
+library(dplyr)
+count(df, major_category) -> major_count
+major_count
+
+
+```
+
+
+C) Barplot of Graduates by Major
+
+```{r, echo = T}
+
+# uses rainbow() function to generate as many colors as major categories
+# then legend will associate those colors to the respective major_category
+
+barplot(
+  major_count$n,
+  col = rainbow(16), 
+  main = "Graduates by Major",
+  horiz = T,
+  legend.text = major_count$major_category,
+  xlab = "Num of Graduates",
+  ylab = "Graduate Major"
+  )
+
+```
+
+
+D) Export to CSV without row labels
+
+
+```{r, echo = T}
+
+write.csv(
+  df, 
+  file = "fivethirtyeight/fivethirtyeight.csv", 
+  append = F, 
+  sep = ",", 
+  row.names = F
+  )
+
+```
+
+
+
+## Question 6
+
+Github repo located here:
+https://github.com/jotsap/DDS6306_Unit03 
+
